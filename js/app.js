@@ -70,6 +70,7 @@ function gameInit() {
 
 function gameWon() {
 
+    // still need to create win modal with game results and replay option
     if (flippedCardCount == winningCardCount) {
 
         console.log("GAME WON");
