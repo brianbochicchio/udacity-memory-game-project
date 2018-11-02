@@ -20,7 +20,7 @@ let deckOfCards = ["fa-diamond",
     "fa-cube"]
 
 // Constants to minimize magic numbers and make changing the game attributes easier
-const winningCardCount = 16;
+const winningCardCount = 4;
 const cardHideDelay = 1000;
 const numberOfStars = 3;
 
@@ -72,9 +72,24 @@ function gameWon() {
 
     // still need to create win modal with game results and replay option
     if (flippedCardCount == winningCardCount) {
-
-        console.log("GAME WON");
+        //console.log("GAME WON");
         clockStop();
+
+        let finalMovesLocation = document.querySelector('#finalMoves');
+        finalMovesLocation.innerText = "Total Moves: " + moveCount;
+
+        let timerLocation = document.querySelector('.timer');
+        let finalTimeLocation = document.querySelector('#finalTime');
+        finalTimeLocation.innerText = "Play Time: " + timerLocation.innerText;
+
+        let starsLocation = document.querySelector(".stars");
+        let finalRatingLocation = document.querySelector('#finalRating')
+        finalRatingLocation.insertAdjacentHTML('beforeend', starsLocation.innerHTML);
+
+        let playAgainButton = document.querySelector('#playAgain');
+        playAgainButton.addEventListener('click', playAgain, true);
+
+        modal.style.display = "block";
     }
 
 };
@@ -103,6 +118,12 @@ function shuffle(array) {
     }
 
     return array;
+}
+
+function playAgain() {
+    modal.style.display = "none";
+    resetBoard();
+
 }
 
 function drawBoard(cards, stars) {
@@ -209,8 +230,18 @@ function flipCard(card) {
     }
 
     if (selectedCards.length === 2) {
-        isMatch(selectedCards);
+
+        if(isMatch(selectedCards)){
+            showMatch(selectedCards);
+            flippedCardCount += 2;
+
+        } else {
+            interceptClick = true;
+            window.setTimeout(hideCards, cardHideDelay, selectedCards);
+        }
+
         updateMoves();
+        selectedCards = [];
     }
 
 
@@ -226,16 +257,7 @@ function isMatch(cards) {
     let card1 = cards[0].childNodes[0].classList[1];
     let card2 = cards[1].childNodes[0].classList[1];
 
-
-    if (card1 == card2) {
-        showMatch(selectedCards);
-        selectedCards = [];
-        flippedCardCount += 2;
-    } else {
-        interceptClick = true;
-        window.setTimeout(hideCards, cardHideDelay, selectedCards);
-
-    }
+    return (card1 == card2 ? true : false);
 
 }
 
@@ -251,7 +273,6 @@ function hideCards(cards) {
     for (card of cards) {
         card.classList.remove('open', 'show');
     }
-    selectedCards = [];
     interceptClick = false;
 
 }
