@@ -25,14 +25,14 @@ Based on the provided rubric the project meets the following mandatory and optio
 * Other elements
     * Modal "Win" Pop-up with the following elements
         * Congratulations Message
-        * Play again query
+        * Play again option
         * Game Time
         * Star Rating
          
 * Functionality
     * Must randomly shuffle cards on game start and reset
     * Must reset the board, star rating, move count and timer when reset is pressed
-    * Must show "Win" modal when all cards are matched (Not Implemented)
+    * Must show "Win" modal when all cards are matched
     * Must countdown start rating from 3 to 1
     * Must show and increment move counter
     * Must show game time in MM:SS 
@@ -43,8 +43,7 @@ Based on the provided rubric the project meets the following mandatory and optio
     * Code is consistent, logical and follow style guides
     * Concerns are separated
         * Function calls take or call an appropriate supporting function 
-            * flipCard shouldn't change the clock state
-            * flipCard can call the function to check for a match when a card is flipped
+        
 
 
 

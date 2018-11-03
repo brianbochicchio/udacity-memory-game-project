@@ -20,7 +20,7 @@ let deckOfCards = ["fa-diamond",
     "fa-cube"]
 
 // Constants to minimize magic numbers and make changing the game attributes easier
-const winningCardCount = 4;
+const winningCardCount = 16;
 const cardHideDelay = 1000;
 const numberOfStars = 3;
 
@@ -35,6 +35,7 @@ let moveCount;
 let elapsedTime;
 let gameClock;
 let flippedCardCount;
+let gameStarted = false;
 
 // Container for selected cards
 let selectedCards = [];
@@ -44,15 +45,6 @@ let interceptClick = false;
 
 // Game Board event listeners
 gameRestart.addEventListener('click', resetBoard);
-
-//Handles card clicks and initiates end game check
-deckEventHandler.addEventListener('click', function (e) {
-    if (e.target.className === "card" && !interceptClick) {
-        flipCard(e.target)
-        //Allows last card to draw before checking for win condition
-        window.setTimeout(gameWon, 250);
-    }
-});
 
 
 /*
@@ -66,13 +58,15 @@ function gameInit() {
     moveCounter.innerText = moveCount;
     shuffle(deckOfCards);
     drawBoard(deckOfCards, numberOfStars);
+
+    //Handles card clicks and initiates end game check
+    deckEventHandler.addEventListener('click', deckClickHandler);
 };
 
 function gameWon() {
 
     // still need to create win modal with game results and replay option
     if (flippedCardCount == winningCardCount) {
-        //console.log("GAME WON");
         clockStop();
 
         let finalMovesLocation = document.querySelector('#finalMoves');
@@ -88,6 +82,8 @@ function gameWon() {
 
         let playAgainButton = document.querySelector('#playAgain');
         playAgainButton.addEventListener('click', playAgain, true);
+
+        deckEventHandler.removeEventListener('click', deckClickHandler);
 
         modal.style.display = "block";
     }
@@ -106,8 +102,9 @@ gameInit();
  */
 
 // Shuffle function from http://stackoverflow.com/a/2450976
+// Changed var to on index variable to let
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -120,6 +117,16 @@ function shuffle(array) {
     return array;
 }
 
+
+function deckClickHandler(e) {
+    if (e.target.className === 'card' && !interceptClick) {
+        flipCard(e.target)
+        //Allows last card to draw before checking for win condition
+        window.setTimeout(gameWon, 250);
+    }
+}
+
+
 function playAgain() {
     modal.style.display = "none";
     resetBoard();
@@ -131,12 +138,12 @@ function drawBoard(cards, stars) {
     let deckLocation = document.querySelector('.deck');
 
     for (card of cards) {
-        deckLocation.insertAdjacentHTML("beforeend", "<li class=\"card\"><i class=\"fa " + card + "\"></i></li>");
+        deckLocation.insertAdjacentHTML('beforeend', '<li class=\"card\"><i class=\"fa ' + card + '\"></i></li>');
     }
 
-    let starsLocation = document.querySelector(".stars");
-    for (let i = 0; i < stars; i++ ) {
-        starsLocation.insertAdjacentHTML("beforeend", "<li><i class=\"fa fa-star\"></i></li>");
+    let starsLocation = document.querySelector('.stars');
+    for (let i = 0; i < stars; i++) {
+        starsLocation.insertAdjacentHTML('beforeend', "<li><i class=\"fa fa-star\"></i></li>");
     }
 
 }
@@ -156,6 +163,7 @@ function resetBoard() {
     }
 
     clockStop();
+    gameStarted = false;
     let timerLocation = document.querySelector('.timer');
     timerLocation.innerText = "-- : --";
 
@@ -163,7 +171,7 @@ function resetBoard() {
 
 }
 
-function updateMoves(){
+function updateMoves() {
     moveCount++;
     moveCounter.innerText = moveCount;
 
@@ -181,24 +189,23 @@ function updateMoves(){
 
 }
 
-
 function removeStar() {
 
-    let starsLocation = document.querySelector(".stars").firstElementChild;
+    let starsLocation = document.querySelector('.stars').firstElementChild;
     starsLocation.parentNode.removeChild(starsLocation);
-    console.log("remove stars called");
+
 }
 
 /*
  * Clock Functions *
  */
 
-function clockStart(){
-    gameClock = setInterval(clockTick, 1000);
+function clockStart() {
+    gameClock = window.setInterval(clockTick, 1000);
 
 }
 
-function clockStop(){
+function clockStop() {
     clearInterval(gameClock);
 
 }
@@ -206,11 +213,11 @@ function clockStop(){
 function clockTick() {
     let timerLocation = document.querySelector('.timer');
     let minute = Math.floor(elapsedTime / 60);
-    let seconds = Math.floor(elapsedTime - (minute * 60))  ;
+    let seconds = Math.floor(elapsedTime - (minute * 60));
     minute = minute.toString();
     seconds = seconds.toString();
     elapsedTime++;
-    timerLocation.innerText = minute.padStart(2,'0')+ " : " + seconds.padStart(2,'0');
+    timerLocation.innerText = minute.padStart(2, '0') + ' : ' + seconds.padStart(2, '0');
 
 }
 
@@ -221,8 +228,10 @@ function clockTick() {
 
 
 function flipCard(card) {
-    if (elapsedTime === 0){
+    if (!gameStarted) {
         clockStart();
+        gameStarted = true;
+
     }
 
     if (selectedCards.length < 2) {
@@ -231,13 +240,15 @@ function flipCard(card) {
 
     if (selectedCards.length === 2) {
 
-        if(isMatch(selectedCards)){
+        if (isMatch(selectedCards)) {
             showMatch(selectedCards);
             flippedCardCount += 2;
 
         } else {
             interceptClick = true;
-            window.setTimeout(hideCards, cardHideDelay, selectedCards);
+            showNoMatch(selectedCards);
+
+
         }
 
         updateMoves();
@@ -269,9 +280,19 @@ function showMatch(cards) {
 
 }
 
-function hideCards(cards) {
+function showNoMatch(cards) {
     for (card of cards) {
         card.classList.remove('open', 'show');
+        card.classList.add('nomatch');
+    }
+    window.setTimeout(hideCards, cardHideDelay, selectedCards);
+
+
+}
+
+function hideCards(cards) {
+    for (card of cards) {
+        card.classList.remove('open', 'show', 'nomatch');
     }
     interceptClick = false;
 
