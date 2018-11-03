@@ -45,7 +45,11 @@ Based on the provided rubric the project meets the following mandatory and optio
         * Function calls take action or call an appropriate supporting function 
         
 
-
+* Devices
+    * Tested in FF, Chrome, Safari and Edge
+    * Tested on iPod Touch, iPad and Kindle Fire
+    * Tested on Note8 and iPhone 8
+    * Tested in Chrome Dev Tools on Multiple "Devices"
 
 
 
