@@ -3,7 +3,7 @@
 ## Table of Contents
 
 * [Summary](#summary)
-* [Requirments](#requirements)
+* [Requirements](#requirements)
 
 ## Credits 
 This project is based on the starter project provided to Udacity Front-End Developer Nanodegree Students on [GitHub](https://github.com/udacity/fend-project-memory-game)
@@ -40,9 +40,9 @@ Based on the provided rubric the project meets the following mandatory and optio
         * Stops when player wins or game is reset
         
 * Code Quality
-    * Code is consistent, logical and follow style guides
+    * Code is consistent, logical and follows style guides
     * Concerns are separated
-        * Function calls take or call an appropriate supporting function 
+        * Function calls take action or call an appropriate supporting function 
         
 
 
